@@ -1,0 +1,11 @@
+name: ComendantShittyFixes
+version: '${project.version}'
+main: Plugin
+authors: [ comendantmc ]
+description: Shitty fixes from comendantmc
+website: https://2b2t.org.ru
+commands:
+  csfixes:
+    description: Comendant Shitty Fixes
+depend:
+  - ProtocolLib
