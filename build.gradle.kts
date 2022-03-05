@@ -27,7 +27,7 @@ dependencies {
     implementation("org.bstats", "bstats-bukkit", "3.0.0")
     val paperAPIVersion: String by project
     compileOnly("com.destroystokyo.paper", "paper-api", paperAPIVersion)
-    compileOnly("com.comphenix.protocol", "ProtocolLib", "4.7.0")
+    compileOnly("com.comphenix.protocol", "ProtocolLib", "4.8.0")
 }
 
 // This can be slower than manually relocating, if that's going to be an issue manually do so instead.
