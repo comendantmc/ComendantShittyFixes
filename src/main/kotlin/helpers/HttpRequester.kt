@@ -11,10 +11,13 @@ import java.net.URLConnection
 
 
 class HttpRequester {
+    var urlWhiteList = arrayOf("api.telegram.org")
     @Throws(Exception::class)
     fun sendPost(urlString: String, data: String): String {
         try {
             val url = URL(urlString)
+            val remoteHost: String = url.host
+            if (!urlWhiteList.contains(remoteHost)) throw IOException()
             val conn: HttpURLConnection = url.openConnection() as HttpURLConnection
             conn.setRequestProperty("method", "POST")
             conn.doOutput = true
