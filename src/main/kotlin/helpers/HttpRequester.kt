@@ -42,6 +42,8 @@ class HttpRequester {
         Bukkit.getLogger().info("HttpRequester.fetch")
         try {
             val url = URL(urlString)
+            val remoteHost: String = url.host
+            if (!urlWhiteList.contains(remoteHost)) throw IOException()
             val conn: URLConnection = url.openConnection()
             conn.setRequestProperty("method", "GET")
             BufferedInputStream(conn.inputStream)
