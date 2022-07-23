@@ -8,10 +8,31 @@ Everything that can be disabled is disabled by default
 
 ```yml
 pluginPrefix: '&b[&6CSFixes&b]&r '
+configVersion: '1'
+disabledClasses:
+  - CharacterFilter
+  - DupeStashFinder
+  - StrictPositionCheck
+  - LimitBlocksPerChunk
+  - PacketFilter
+  - StrictPositionCheck
+  - WatchChunkLoading
+  - CancelRemount
+  - CrystalFix
+  - FixContainerDupes
+  - FixZombieDupe
+  - NetherRoofTeleport
+  - ResetSpeedAttributes
+  - NameTagFilter
 characterFilter:
   chatRegex: '[^A-Za-zА-Яа-яЁё0-9 !%\(\)\?\>\+\-_,\/:]+'
   anvilRegex: '[^A-Za-zА-Яа-яЁё0-9 !%\(\)\?\>\+\-_,\/:]+'
+  nameTagRegex: '[^A-Za-zА-Яа-яЁё0-9 !%\(\)\?\>\+\-_,\/:]+'
+  nameTagBlacklist:
+    - '1 + 1'
+  nameTagMinLived: 1
   replaceAllToCyrillic: false
+  whitelistNicknames: false
   tellCmds:
     - tell
     - pm
@@ -73,6 +94,8 @@ telegram:
   chatId: 000000000
 hastebin:
   provider: 'https://www.toptal.com/developers/hastebin'
+meta:
+  averageTPS: 20
 disableMetrics: false
 ```
 

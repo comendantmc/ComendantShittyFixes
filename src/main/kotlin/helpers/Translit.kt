@@ -70,7 +70,7 @@ object Translit {
 
     fun translit(text: String?): String {
         if (text == null)
-            return "";
+            return ""
 
         val len = text.length
         if (len == 0) {
@@ -90,13 +90,19 @@ object Translit {
             // if these 2 symbols are not connected try to translate one by one
             if (translated.isEmpty()) {
                 translated = get(toTranslate[0].toString() + "")
-                sb.append(if (translated.isEmpty()) toTranslate[0] else translated)
+                sb.append(translated.ifEmpty { toTranslate[0] })
                 i++
             } else {
-                sb.append(if (translated.isEmpty()) toTranslate else translated)
+                sb.append(translated.ifEmpty { toTranslate })
                 i += 2
             }
         }
         return sb.toString()
+    }
+
+    fun translitPerWordWithWhitelist(text: String?, whitelist: List<String>): String {
+        if (text == null)
+            return ""
+        return text.split(" ").joinToString(" ") { if (!whitelist.contains(it)) translit(it) else it }
     }
 }

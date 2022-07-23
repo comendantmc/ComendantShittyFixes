@@ -30,19 +30,22 @@ class CharacterFilter(var plugin: Plugin) : Listener {
     @EventHandler(priority = EventPriority.HIGH)
     fun onAnvilRename(e: InventoryClickEvent) {
         if (e.isCancelled) return
+
         val ent = e.whoClicked
         if (ent is Player && e.inventory is AnvilInventory) {
+            val regex = plugin.config.getString("characterFilter.anvilRegex")
+
             val view = e.view
             val rawSlot = e.rawSlot
             if (rawSlot == view.convertSlot(rawSlot) && rawSlot == 2) {
-                val item = e.currentItem
-                if (item != null) {
-                    val meta = item.itemMeta
+                if (e.currentItem != null) {
+                    val meta = e.currentItem.itemMeta
                     if (meta != null && meta.hasDisplayName()) {
-                        val regex = plugin.config.getString("characterFilter.anvilRegex")
-                        meta.displayName = meta.displayName.replace(regex.toRegex(), "")
-                        item.itemMeta = meta
+                        meta.displayName = meta.displayName.replace(regex.toRegex(), "").trim()
+                        e.currentItem.itemMeta = meta
                     }
+//                    if (meta.displayName == null || meta.displayName.isEmpty())
+//                        e.isCancelled = true
                 }
             }
         }
@@ -58,9 +61,15 @@ class CharacterFilter(var plugin: Plugin) : Listener {
         }
         val regex = plugin.config.getString("characterFilter.chatRegex")
         var message = msg.replace(regex.toRegex(), "")
-        if (plugin.config.getBoolean("characterFilter.replaceAllToCyrillic")) {
-            message = Translit.translit(message)
-        }
+        if (plugin.config.getBoolean("characterFilter.replaceAllToCyrillic"))
+            message = if (plugin.config.getBoolean("characterFilter.whitelistNicknames")) {
+//                Translit.translitPerWordWithWhitelist(message, Bukkit.getOnlinePlayers().map { it.name })
+
+                Translit.translit(message)
+            } else {
+                Translit.translit(message)
+            }
+
         if (message.isNotEmpty()) event.message = message else event.isCancelled = true
     }
 

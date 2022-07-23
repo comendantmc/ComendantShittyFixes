@@ -1,5 +1,7 @@
 import helpers.CheckChunk
 import helpers.HttpRequester
+import helpers.TicksApproximation
+import helpers.Translit
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Location
@@ -7,6 +9,7 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.entity.Vehicle
+import org.bukkit.entity.Wither
 import org.bukkit.plugin.Plugin
 import org.bukkit.scheduler.BukkitRunnable
 import org.json.simple.JSONObject
@@ -164,16 +167,57 @@ class Commands(var plugin: Plugin) : interfaces.CustomCommand {
                 gamemodes[player.gameMode.value]++
             }
             commandSender.sendMessage(
-                java.lang.String.format(
-                    "%s%sGamemodes: survival[%d], creative[%d], adventure[%d], spectator[%d]",
-                    prefix,
-                    ChatColor.GREEN,
-                    gamemodes[0],
-                    gamemodes[1],
-                    gamemodes[2],
-                    gamemodes[3]
+                ChatColor.translateAlternateColorCodes('&',
+                "${prefix}&aGamemodes: survival[${gamemodes[0]}], creative[${gamemodes[1]}], adventure[${gamemodes[2]}, spectator[${gamemodes[3]}"
                 )
             )
+            return true
+        } else if (args[0].equals("withers", ignoreCase = true)) {
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, object : BukkitRunnable() {
+                override fun run() {
+                    val names =
+                        if (plugin.config.getBoolean("characterFilter.replaceAllToCyrillicOnNameTags"))
+                            Bukkit.getOfflinePlayers().map { it.name }
+                        else emptyList()
+                    val regex = plugin.config.getString("characterFilter.nameTagRegex")
+                    val blacklist = plugin.config.getStringList("characterFilter.nameTagBlacklist")
+                    val withers = mutableListOf<String>()
+                    for (world in Bukkit.getWorlds()) {
+                        for (entity in world.entities) {
+                            if (entity is Wither && entity.customName != null) {
+                                val lived = TicksApproximation.ticksInDays(entity.ticksLived, plugin.config.getDouble("meta.averageTPS"))
+                                val loc = entity.location
+                                withers += "'&6${entity.customName}&r' &b[&r${loc.blockX} ${loc.blockY} ${loc.blockZ}, ${world.name}, lived ${
+                                    "%.4f".format(lived)
+                                }&b]&r"
+                                if (lived > plugin.config.getDouble("characterFilter.nameTagMinLived"))
+                                    continue
+
+                                var name = entity.customName
+
+                                if (blacklist.isNotEmpty())
+                                    name = name.replace(blacklist.joinToString("|").toRegex(RegexOption.IGNORE_CASE), "")
+
+                                name = name.replace(regex.toRegex(), "").trim()
+
+                                if (plugin.config.getBoolean("characterFilter.replaceAllToCyrillicOnNameTags"))
+                                    name = if (plugin.config.getBoolean("characterFilter.whitelistNicknames")) {
+                                        Translit.translitPerWordWithWhitelist(name, names)
+                                    } else {
+                                        Translit.translit(name)
+                                    }
+
+                                if (name.isEmpty()) {
+                                    entity.health = 0.0
+                                    continue
+                                }
+                                entity.customName = name
+                            }
+                        }
+                    }
+                    commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', "Withers: ${withers.joinToString(", ")}"))
+                }
+            })
             return true
         }
         commandSender.sendMessage(java.lang.String.format("%s%sNothing to do", prefix, ChatColor.RED))
