@@ -47,12 +47,11 @@ class Plugin : JavaPlugin() {
         for (module in modules) {
             if (disabledClasses.contains(module.javaClass.simpleName))
                 continue
-            if (module is Listener)
-                server.pluginManager.registerEvents(module, this)
-            if (module is RepeatingTask)
-                Bukkit.getScheduler().scheduleSyncRepeatingTask(this, module, module.delay, module.period)
-            if (module is CustomCommand)
-                getCommand(module.command).executor = module
+            when(module) {
+                is Listener -> server.pluginManager.registerEvents(module, this)
+                is RepeatingTask -> Bukkit.getScheduler().scheduleSyncRepeatingTask(this, module, module.delay, module.period)
+                is CustomCommand -> getCommand(module.command).executor = module
+            }
         }
     }
 }
