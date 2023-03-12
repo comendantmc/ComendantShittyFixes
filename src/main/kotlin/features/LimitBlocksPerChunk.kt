@@ -17,7 +17,7 @@ class LimitBlocksPerChunk(var plugin: Plugin) : Listener {
     @EventHandler(priority = EventPriority.LOW)
     fun onBlockPlaced(e: BlockPlaceEvent) {
         if (!e.isCancelled) {
-            val chunk = e.blockAgainst.chunk
+            val chunk = e.block.chunk // use the chunk of the placed block
             val block: Block = e.block
             if (CheckChunk.redstoneMaterials.contains(block.type)) {
                 val loc: Location = block.location
@@ -46,4 +46,5 @@ class LimitBlocksPerChunk(var plugin: Plugin) : Listener {
             }
         }
     }
+
 }
