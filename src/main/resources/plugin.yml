@@ -1,7 +1,7 @@
 name: ComendantShittyFixes
 version: '${project.version}'
 main: Plugin
-authors: [ comendantmc ]
+authors: [ comendantmc, dazed68, cattyngmd ]
 description: Shitty fixes from comendantmc
 website: https://2b2t.org.ru
 commands:

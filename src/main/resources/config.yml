@@ -89,3 +89,4 @@ hastebin:
 meta:
   averageTPS: 20
 disableMetrics: false
+silentSwitchFix: true
