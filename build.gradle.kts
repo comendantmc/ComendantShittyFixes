@@ -24,7 +24,7 @@ repositories {
 dependencies {
     val kotlinVersion: String by System.getProperties()
     implementation(kotlin("stdlib", kotlinVersion))
-    implementation("org.bstats", "bstats-bukkit", "3.0.0")
+    implementation("org.bstats", "bstats-bukkit", "3.0.2")
     val paperAPIVersion: String by project
     compileOnly("com.destroystokyo.paper", "paper-api", paperAPIVersion)
     compileOnly("com.comphenix.protocol", "ProtocolLib", "4.8.0")
