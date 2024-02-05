@@ -7,7 +7,7 @@ plugins {
     kotlin("jvm").version(kotlinVersion)
     val shadowVersion: String by System.getProperties()
     id("com.github.johnrengelman.shadow").version(shadowVersion)
-    id("xyz.jpenilla.run-paper") version "1.0.6"
+    id("xyz.jpenilla.run-paper") version "1.1.0"
 }
 
 val pluginGroup: String by project
